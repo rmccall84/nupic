@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.0.15-dev
+## 0.0.15
+
+* Important change
 
 ## 0.0.14
 
