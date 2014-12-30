@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.0.19-dev
+## 0.0.19
+
+* Updating pip before setuptools for release
 
 ## 0.0.18
 
