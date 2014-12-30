@@ -24,10 +24,10 @@ echo
 echo "Running after_success-release.sh..."
 echo
 
-echo "Updating setuptools..."
-sudo pip install -U "setuptools>=0.9" || exit
 echo "Updating pip..."
 sudo pip install -U "pip==1.5.6" || exit
+echo "Updating setuptools..."
+sudo pip install -U "setuptools>=0.9" || exit
 echo "Installing wheel..."
 sudo pip install wheel || exit
 echo "Installing twine..."
