@@ -22,21 +22,21 @@
 """
 Plot class used in monitor mixin framework.
 """
-
+import logging
 import matplotlib.pyplot as plt
-
-
+import matplotlib.cm as cm
 
 class Plot(object):
-  """
-  A plot graphed over a list of numbers.
-  """
+
+  g_log = logging.getLogger(__name__)
+
+
   def __init__(self, monitor, title):
     """
+
     @param monitor (MonitorMixinBase) Monitor Mixin instance that generated
                                       this plot
     @param title   (string)           Title
-    @param data    (list)             List of numbers to graph plot over
     """
     self._monitor = monitor
     self._title = title
@@ -46,21 +46,6 @@ class Plot(object):
     plt.show()
 
 
-  def addGraph(self, data, position=111, xlabel=None, ylabel=None):
-    ax = self._addBase(position, xlabel=xlabel, ylabel=ylabel)
-    ax.plot(data)
-    plt.draw()
-
-
-  def addHistogram(self, data, position=111, xlabel=None, ylabel=None,
-                   bins=None):
-    """
-    @param bucketSize (int) Size of each bucket
-    """
-    ax = self._addBase(position, xlabel=xlabel, ylabel=ylabel)
-    ax.hist(data, bins=bins, color="green", alpha=0.8)
-    plt.draw()
-
 
   def _initFigure(self):
     fig = plt.figure()
@@ -68,18 +53,50 @@ class Plot(object):
     return fig
 
 
+
+  def _prettyPrintTitle(self):
+    return ("[{0}] {1}".format(self._monitor.mmName, self._title)
+            if self._monitor.mmName is not None else self._title)
+
+
+
+  def addGraph(self, data, position=111, xlabel=None, ylabel=None):
+    ax = self._addBase(position, xlabel=xlabel, ylabel=ylabel)
+    ax.plot(data)
+    plt.draw()
+
+
+
+  def addImage(self, data, position=111, xlabel=None, ylabel=None,
+               cmap=cm.Greys, aspect="auto", interpolation="nearest"):
+    if data is not None:
+      ax = self._addBase(position, xlabel=xlabel, ylabel=ylabel)
+      ax.imshow(data, cmap=cmap, aspect=aspect, interpolation=interpolation)
+      plt.draw()
+    else:
+      self.g_log.warning("Cannot show None")
+
+
+
+  def addHistogram(self, data, position=111, xlabel=None, ylabel=None,
+                   bins=None):
+    ax = self._addBase(position, xlabel=xlabel, ylabel=ylabel)
+    ax.hist(data, bins=bins, color="green", alpha=0.8)
+    plt.draw()
+
+
+
   def _addBase(self, position, xlabel=None, ylabel=None):
     """
-    @param data (list) List of numbers to graph plot over
-
-    @return (matplotlib.Axes) subplot
+    Adds a subplot to the plot's figure at specified position.
+    @param position - A 3-digit number. The first two digits define a 2D grid
+            where subplots may be added. The final digit specifies the nth grid
+            location for the added subplot
+    @param xlabel - text to be displayed on the x-axis
+    @param ylabel - text to be displayed on the y-axis
+    @return (matplotlib.Axes) instance
     """
     ax = self._fig.add_subplot(position)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     return ax
-
-
-  def _prettyPrintTitle(self):
-    return ("[{0}] {1}".format(self._monitor.mmName, self._title)
-            if self._monitor.mmName is not None else self._title)
